@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr Adell Naidoo – Patient Forms</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════ */
+:root {
+  --gold:        #C9A84C;
+  --gold-dark:   #A8832A;
+  --gold-pale:   #F5ECC8;
+  --gold-subtle: #FAF6EC;
+  --black:       #111111;
+  --charcoal:    #2A2A2A;
+  --gray:        #6B6B6B;
+  --gray-light:  #CCCCCC;
+  --white:       #FFFFFF;
+  --off-white:   #FDFCF8;
+  --border:      #E5DCC8;
+  --green:       #2E7D52;
+  --red:         #C0392B;
+}
+
+/* ══════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  font-weight: 400;
+  background: var(--off-white);
+  color: var(--black);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+.header {
+  background: var(--black);
+  border-bottom: 1px solid var(--gold-dark);
+  padding: 18px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.header-logo h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+.header-logo p {
+  font-size: 10px;
+  color: var(--gray-light);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.header-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold);
+  background: rgba(201,168,76,0.08);
+}
+.header-badge.patient-badge {
+  border-color: rgba(46,125,82,0.4);
+  color: #5CB87A;
+  background: rgba(46,125,82,0.08);
+}
+.header-info {
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+
+/* ══════════════════════════════════════
+   VIEWS — show/hide
+══════════════════════════════════════ */
+#adminView  { display: block; }
+#patientView { display: none; }
+
+/* ══════════════════════════════════════
+   ADMIN VIEW
+══════════════════════════════════════ */
+.admin-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+.admin-heading {
+  margin-bottom: 32px;
+}
+.admin-heading h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.admin-heading p {
+  font-size: 12px;
+  color: var(--gray);
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}
+
+/* Form selector cards */
+.form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.form-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.form-card:hover { border-color: var(--gold); }
+.form-card.active {
+  border-color: var(--gold);
+  background: var(--gold-subtle);
+}
+.form-card.active .fcard-box {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.form-card.active .fcard-box::after { opacity: 1; }
+.fcard-box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--gray-light);
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.15s;
+}
+.fcard-box::after {
+  content: '✓';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.fcard-icon { font-size: 18px; flex-shrink: 0; }
+.fcard-body { flex: 1; }
+.fcard-title { font-size: 13px; font-weight: 600; color: var(--black); }
+.fcard-desc  { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.fcard-tag {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; flex-shrink: 0;
+  border: 1px solid var(--border);
+  color: var(--gray);
+}
+.fcard-tag.new-tag { border-color: rgba(201,168,76,0.5); color: var(--gold-dark); }
+
+/* Quick presets */
+.presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.presets-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.preset-btn {
+  padding: 6px 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--charcoal);
+  background: var(--white);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+.preset-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
+
+/* Send panel */
+.send-panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 28px;
+}
+.send-panel h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.selected-summary {
+  background: var(--gold-subtle);
+  border-left: 3px solid var(--gold);
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  color: var(--charcoal);
+  display: none;
+}
+.selected-summary strong { color: var(--gold-dark); }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sel-tag {
+  font-size: 10px; padding: 2px 9px;
+  background: var(--white);
+  border: 1px solid var(--gold-pale);
+  color: var(--charcoal);
+}
+
+/* Fields */
+.field-group { display: grid; gap: 14px; margin-bottom: 14px; }
+.field-group.two { grid-template-columns: 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gray);
+}
+.field input, .field textarea, .field select {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: var(--black);
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  padding: 10px 13px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--gold);
+  background: var(--white);
+}
+.field textarea { resize: vertical; min-height: 70px; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 10px; margin-top: 6px; }
+.btn-primary {
+  flex: 2;
+  padding: 15px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--white);
+  background: var(--black);
+  border: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--gold-dark); }
+.btn-primary:disabled { background: var(--gray-light); cursor: not-allowed; }
+.btn-outline {
+  flex: 1;
+  padding: 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--black);
+  background: var(--white);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold-dark); }
+
+/* Link box */
+.link-box {
+  margin-top: 18px;
+  padding: 16px 18px;
+  background: #F5F5F5;
+  border: 1px solid var(--border);
+  display: none;
+}
+.link-box-label {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gray); margin-bottom: 8px;
+}
+.link-url {
+  font-size: 11px; font-family: monospace;
+  color: var(--gold-dark); word-break: break-all;
+  line-height: 1.6;
+}
+.copy-btn {
+  margin-top: 10px;
+  padding: 6px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--black); color: var(--white);
+  border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.copy-btn:hover { background: var(--gold-dark); }
+
+/* ══════════════════════════════════════
+   PATIENT VIEW
+══════════════════════════════════════ */
+.patient-header {
+  background: var(--black);
+  border-bottom: 1px solid var(--gold-dark);
+  padding: 16px 36px 0;
+}
+.patient-greeting {
+  font-size: 11px;
+  color: var(--gray-light);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.patient-greeting strong { color: var(--gold); }
+
+/* Stepper */
+.stepper {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.stepper::-webkit-scrollbar { display: none; }
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 22px 0;
+  cursor: default;
+  position: relative;
+  flex-shrink: 0;
+}
+.step::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+}
+.step.is-active::after  { background: var(--gold); }
+.step.is-done::after    { background: var(--green); }
+.step-circle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  color: var(--gray-light);
+  transition: all 0.2s;
+  margin-bottom: 4px;
+}
+.step.is-active .step-circle { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.12); }
+.step.is-done  .step-circle { border-color: var(--green); background: var(--green); color: white; font-size: 13px; }
+.step-label {
+  font-size: 9px;
+  color: var(--gray-light);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-bottom: 10px;
+}
+.step.is-active .step-label { color: var(--gold); }
+.step.is-done   .step-label { color: #5CB87A; }
+
+/* Patient forms wrapper */
+.patient-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* Form pages */
+.form-page { display: none; }
+.form-page.is-active { display: block; }
+
+/* Form header */
+.form-header { margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.form-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 300;
+  color: var(--black); margin-bottom: 4px;
+}
+.form-header p { font-size: 11px; color: var(--gray); letter-spacing: 0.06em; }
+.form-header p span { color: var(--gold-dark); }
+
+/* Cards */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gold-pale);
+}
+
+/* Consent block */
+.consent-box {
+  background: var(--gold-subtle);
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: var(--charcoal);
+  line-height: 1.8;
+}
+
+/* Numbered consent */
+.consent-numbered {
+  background: var(--gold-subtle);
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.consent-numbered ol { list-style: none; counter-reset: cn; }
+.consent-numbered ol li {
+  counter-increment: cn;
+  font-size: 12px; line-height: 1.8;
+  color: var(--charcoal);
+  padding: 6px 0 6px 22px;
+  position: relative;
+  border-bottom: 1px solid var(--gold-pale);
+}
+.consent-numbered ol li:last-child { border-bottom: none; }
+.consent-numbered ol li::before {
+  content: counter(cn) '.';
+  position: absolute; left: 0;
+  font-weight: 700; color: var(--gold-dark); font-size: 11px;
+}
+
+/* Accounts list */
+.terms-box {
+  background: var(--gold-subtle);
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.terms-box ul { list-style: none; }
+.terms-box ul li {
+  font-size: 12px; line-height: 1.8;
+  color: var(--charcoal);
+  padding: 5px 0 5px 16px;
+  position: relative;
+  border-bottom: 1px solid var(--gold-pale);
+}
+.terms-box ul li:last-child { border-bottom: none; }
+.terms-box ul li::before { content: '•'; position: absolute; left: 0; color: var(--gold); font-size: 14px; }
+.terms-ack {
+  margin-top: 12px;
+  font-size: 12px; font-style: italic;
+  color: var(--charcoal); line-height: 1.7;
+}
+
+/* Checkboxes */
+.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 8px; }
+.check-item { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; padding: 4px 0; }
+.check-item input[type=checkbox] {
+  appearance: none; width: 15px; height: 15px;
+  border: 1.5px solid var(--gray-light);
+  cursor: pointer; flex-shrink: 0; margin-top: 2px;
+  position: relative; transition: all 0.15s;
+  background: var(--white);
+}
+.check-item input[type=checkbox]:checked { background: var(--gold); border-color: var(--gold); }
+.check-item input[type=checkbox]:checked::after {
+  content: '✓'; position: absolute;
+  color: white; font-size: 10px; font-weight: 700;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.check-item span { font-size: 12px; color: var(--charcoal); line-height: 1.5; }
+
+/* Standalone checkbox options (consent form) */
+.check-option {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  cursor: pointer;
+  margin-bottom: 7px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.check-option:hover { border-color: var(--gold); }
+.check-option input[type=checkbox] {
+  appearance: none; width: 15px; height: 15px;
+  border: 1.5px solid var(--gray-light);
+  cursor: pointer; flex-shrink: 0; margin-top: 2px;
+  position: relative; transition: all 0.15s;
+  background: var(--white);
+}
+.check-option input[type=checkbox]:checked { background: var(--gold); border-color: var(--gold); }
+.check-option input[type=checkbox]:checked::after {
+  content: '✓'; position: absolute;
+  color: white; font-size: 10px; font-weight: 700;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.check-option span { font-size: 12px; color: var(--charcoal); line-height: 1.6; }
+
+/* Radio */
+.radio-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 6px; }
+.radio-item { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.radio-item input[type=radio] {
+  appearance: none; width: 15px; height: 15px;
+  border: 1.5px solid var(--gray-light);
+  border-radius: 50%; cursor: pointer;
+  transition: all 0.15s; background: var(--white);
+  position: relative; flex-shrink: 0;
+}
+.radio-item input[type=radio]:checked { border-color: var(--gold); }
+.radio-item input[type=radio]:checked::after {
+  content: ''; position: absolute;
+  width: 7px; height: 7px;
+  background: var(--gold); border-radius: 50%;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.radio-item span { font-size: 12px; color: var(--charcoal); }
+
+/* YN question */
+.yn-block {
+  padding: 12px 15px;
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.yn-block p { font-size: 12px; color: var(--charcoal); margin-bottom: 8px; line-height: 1.5; }
+.yn-extra { display: none; margin-top: 8px; }
+.yn-extra.show { display: block; }
+.yn-extra input {
+  width: 100%; font-family: 'Jost', sans-serif; font-size: 13px;
+  border: none; border-bottom: 1.5px solid var(--gold);
+  padding: 6px 8px; background: transparent; outline: none; color: var(--black);
+}
+
+/* Contact preference */
+.pref-row { display: flex; gap: 8px; margin-top: 6px; }
+.pref-btn {
+  padding: 7px 15px;
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500;
+  border: 1.5px solid var(--border); background: var(--white);
+  color: var(--gray); cursor: pointer; transition: all 0.15s;
+}
+.pref-btn.on, .pref-btn:hover { border-color: var(--gold); color: var(--gold-dark); background: var(--gold-subtle); }
+
+/* Dated at */
+.dated {
+  background: var(--off-white);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px; color: var(--charcoal);
+}
+.dated-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.dated-row input {
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  border: none; border-bottom: 1px solid var(--gold);
+  background: transparent; padding: 3px 6px; outline: none; color: var(--black);
+}
+
+/* Signature */
+.sig-wrap { position: relative; }
+.sig-canvas {
+  width: 100%; display: block;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  cursor: crosshair; touch-action: none;
+}
+.sig-actions { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.sig-clear {
+  font-family: 'Jost', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gray); background: none;
+  border: 1px solid var(--border); padding: 4px 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.sig-clear:hover { border-color: var(--gold); color: var(--gold-dark); }
+.sig-hint { font-size: 10px; color: var(--gray); font-style: italic; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* Nav buttons */
+.nav-btns {
+  display: flex; gap: 10px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.nav-back {
+  flex: 1; padding: 14px;
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--black); background: var(--white);
+  border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-back:hover { border-color: var(--gold); color: var(--gold-dark); }
+.nav-next {
+  flex: 2; padding: 15px;
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--white); background: var(--black);
+  border: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-next:hover { background: var(--gold-dark); }
+.nav-submit {
+  flex: 2; padding: 15px;
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--white); background: var(--green);
+  border: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-submit:hover { background: #236640; }
+.nav-submit:disabled { background: var(--gray-light); cursor: not-allowed; }
+
+/* Complete screen */
+.complete-screen {
+  text-align: center;
+  padding: 80px 40px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.complete-screen .tick { font-size: 52px; margin-bottom: 18px; }
+.complete-screen h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300; margin-bottom: 12px;
+}
+.complete-screen p { font-size: 13px; color: var(--gray); line-height: 1.8; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--black); color: var(--white);
+  padding: 12px 20px; font-size: 12px; font-weight: 500;
+  border-left: 3px solid var(--gold);
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s; z-index: 999; max-width: 280px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .header { padding: 14px 18px; flex-direction: column; gap: 10px; text-align: center; }
+  .header-right { align-items: center; }
+  .admin-wrap, .patient-wrap { padding: 24px 16px; }
+  .card { padding: 18px 16px; }
+  .field-group.two { grid-template-columns: 1fr; }
+  .check-grid { grid-template-columns: 1fr; }
+  .nav-btns { flex-direction: column; }
+  .send-panel { padding: 20px 18px; }
+  .patient-header { padding: 14px 18px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="header">
+  <div class="header-logo">
+    <h1>Dr Adell Naidoo</h1>
+    <p>Prosthodontist &nbsp;·&nbsp; Patient Forms</p>
+  </div>
+  <div class="header-right">
+    <div class="header-badge" id="headerBadge">Admin Portal</div>
+    <div class="header-info">Practice No: 094000 0501158 &nbsp;·&nbsp; Tel: 021 671 2562</div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     ADMIN VIEW
+══════════════════════════════════════ -->
+<div id="adminView">
+  <div class="admin-wrap">
+
+    <div class="admin-heading">
+      <h2>Select Forms to Send</h2>
+      <p>Choose which forms this patient needs to complete, enter their details, then copy and send them the link.</p>
+    </div>
+
+    <!-- Form cards -->
+    <div class="form-list">
+
+      <div class="form-card" data-form="new-patient" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">📋</div>
+        <div class="fcard-body">
+          <div class="fcard-title">New Patient Form</div>
+          <div class="fcard-desc">Personal info, contact details, medical aid, medical & dental history, acknowledgment.</div>
+        </div>
+        <div class="fcard-tag new-tag">New Patients</div>
+      </div>
+
+      <div class="form-card" data-form="dental-consent" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">📸</div>
+        <div class="fcard-body">
+          <div class="fcard-title">Consent – Dental Records</div>
+          <div class="fcard-desc">Patient consent for sharing dental records & photos for educational or social media use.</div>
+        </div>
+        <div class="fcard-tag">As Needed</div>
+      </div>
+
+      <div class="form-card" data-form="popi-xray" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">🩻</div>
+        <div class="fcard-body">
+          <div class="fcard-title">POPI Act – X-rays & Clinical Images</div>
+          <div class="fcard-desc">Full responsibility declaration for x-rays and scan files. English & Afrikaans.</div>
+        </div>
+        <div class="fcard-tag">As Needed</div>
+      </div>
+
+      <div class="form-card" data-form="popi-private" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">🔒</div>
+        <div class="fcard-body">
+          <div class="fcard-title">POPI Act – Private Information</div>
+          <div class="fcard-desc">Approval for sharing private info with referring clinicians and debt collectors.</div>
+        </div>
+        <div class="fcard-tag">As Needed</div>
+      </div>
+
+      <div class="form-card" data-form="accounts" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">💳</div>
+        <div class="fcard-body">
+          <div class="fcard-title">Accounts Liability</div>
+          <div class="fcard-desc">Payment terms, medical aid disclaimer, cost estimates and account responsibility.</div>
+        </div>
+        <div class="fcard-tag new-tag">New Patients</div>
+      </div>
+
+      <div class="form-card" data-form="treatment" onclick="toggleCard(this)">
+        <div class="fcard-box"></div>
+        <div class="fcard-icon">🦷</div>
+        <div class="fcard-body">
+          <div class="fcard-title">Treatment Consent</div>
+          <div class="fcard-desc">10-point treatment consent covering risks, fees, deposits and information disclosure.</div>
+        </div>
+        <div class="fcard-tag new-tag">New Patients</div>
+      </div>
+
+    </div>
+
+    <!-- Quick presets -->
+    <div class="presets">
+      <span class="presets-label">Quick select:</span>
+      <button class="preset-btn" onclick="applyPreset(['new-patient','dental-consent','popi-xray','popi-private','accounts','treatment'])">All Forms</button>
+      <button class="preset-btn" onclick="applyPreset(['new-patient','accounts','treatment'])">New Patient Pack</button>
+      <button class="preset-btn" onclick="applyPreset(['popi-xray','popi-private'])">POPI Only</button>
+      <button class="preset-btn" onclick="applyPreset(['dental-consent'])">Consent Only</button>
+      <button class="preset-btn" onclick="applyPreset([])">Clear</button>
+    </div>
+
+    <!-- Send panel -->
+    <div class="send-panel">
+      <h3>Send to Patient</h3>
+
+      <div class="selected-summary" id="selSummary">
+        <strong>Selected:</strong>
+        <div class="tag-row" id="selTags"></div>
+      </div>
+
+      <div class="field-group two">
+        <div class="field">
+          <label>Patient Name</label>
+          <input type="text" id="admin_name" placeholder="Patient's full name">
+        </div>
+        <div class="field">
+          <label>Patient Email</label>
+          <input type="email" id="admin_email" placeholder="patient@email.com">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-outline" onclick="previewForms()">Preview</button>
+        <button class="btn-primary" id="sendBtn" onclick="generateLink()" disabled>Generate Patient Link</button>
+      </div>
+
+      <div class="link-box" id="linkBox">
+        <div class="link-box-label">Patient link — copy and send via email or WhatsApp</div>
+        <div class="link-url" id="linkUrl"></div>
+        <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PATIENT VIEW
+══════════════════════════════════════ -->
+<div id="patientView">
+
+  <div class="patient-header">
+    <div class="patient-greeting" id="patientGreeting">
+      Complete your forms for <strong>Dr Adell Naidoo</strong>
+    </div>
+    <div class="stepper" id="stepper"></div>
+  </div>
+
+  <div class="patient-wrap">
+
+    <!-- ── FORM: NEW PATIENT ── -->
+    <div class="form-page" id="page-new-patient">
+      <div class="form-header">
+        <h2>New Patient Form</h2>
+        <p>Dr Adell Naidoo &nbsp;·&nbsp; <span>BChD (Stell), Dip Odont (Aest) (Pret), MSc (Wits), MChD (UWC)</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Personal Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Title</label>
+            <select id="np_title"><option value="">—</option><option>Mr</option><option>Mrs</option><option>Miss</option><option>Ms</option><option>Dr</option><option>Prof</option></select>
+          </div>
+          <div class="field"><label>Initials</label><input type="text" id="np_initials" placeholder="e.g. A.B."></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>First Names</label><input type="text" id="np_firstname" placeholder="Full first names"></div>
+          <div class="field"><label>Surname</label><input type="text" id="np_surname" placeholder="Surname"></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>Date of Birth</label><input type="date" id="np_dob"></div>
+          <div class="field"><label>ID / Passport Number</label><input type="text" id="np_id" placeholder="ID or passport number"></div>
+        </div>
+        <div class="field-group">
+          <div class="field"><label>Physical Address</label><input type="text" id="np_address" placeholder="Street address"></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>City / Suburb</label><input type="text" id="np_city" placeholder="City"></div>
+          <div class="field"><label>Postal Code</label><input type="text" id="np_postal" placeholder="0000"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contact Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Cell Phone</label><input type="tel" id="np_cell" placeholder="082 000 0000"></div>
+          <div class="field"><label>Work Phone</label><input type="tel" id="np_work" placeholder="021 000 0000"></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>Home Phone</label><input type="tel" id="np_home" placeholder="021 000 0000"></div>
+          <div class="field"><label>Email Address</label><input type="email" id="np_email" placeholder="email@example.com"></div>
+        </div>
+        <div class="field">
+          <label>Best Way to Contact You</label>
+          <div class="pref-row">
+            <button class="pref-btn" type="button" onclick="this.classList.toggle('on')">Phone</button>
+            <button class="pref-btn" type="button" onclick="this.classList.toggle('on')">Email</button>
+            <button class="pref-btn" type="button" onclick="this.classList.toggle('on')">WhatsApp</button>
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:14px;">
+          <div class="field"><label>Name of Person Who Referred You</label><input type="text" id="np_referral" placeholder="Referring person or practice"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Medical Aid Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Medical Aid Name</label><input type="text" id="np_ma_name" placeholder="e.g. Discovery"></div>
+          <div class="field"><label>Medical Aid Number</label><input type="text" id="np_ma_num" placeholder="Membership number"></div>
+        </div>
+        <div class="field-group">
+          <div class="field"><label>Main Member Name</label><input type="text" id="np_ma_member" placeholder="Full name of main member"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Emergency Contact</div>
+        <div class="field-group two">
+          <div class="field"><label>Name</label><input type="text" id="np_ec_name" placeholder="First name"></div>
+          <div class="field"><label>Surname</label><input type="text" id="np_ec_surname" placeholder="Surname"></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>Relationship to Patient</label><input type="text" id="np_ec_rel" placeholder="e.g. Spouse, Parent"></div>
+          <div class="field"><label>Contact Number</label><input type="tel" id="np_ec_tel" placeholder="082 000 0000"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Person Responsible for the Account</div>
+        <div class="field-group two">
+          <div class="field"><label>Name</label><input type="text" id="np_ar_name" placeholder="First name"></div>
+          <div class="field"><label>Surname</label><input type="text" id="np_ar_surname" placeholder="Surname"></div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>ID Number</label><input type="text" id="np_ar_id" placeholder="ID number"></div>
+          <div class="field"><label>Contact Number</label><input type="tel" id="np_ar_tel" placeholder="082 000 0000"></div>
+        </div>
+        <div class="field-group">
+          <div class="field"><label>Physical Address (if different)</label><input type="text" id="np_ar_addr" placeholder="Address"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Medical Conditions</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Please indicate if you currently or previously have suffered from any of the following.</p>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Heart conditions</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Stomach / Digestive conditions</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Pacemaker</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Other Auto-Immune Diseases</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Artificial heart valve / stent</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Osteoporosis / Osteopenia</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Rheumatic fever</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Joint replacement (hip, knee, other)</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>High blood pressure</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Snoring / Sleep Apnea</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Low blood pressure</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Chronic Headaches</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Stroke</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Sinus problems</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Diabetes</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Hepatitis A or B</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Blood disorders</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Hepatitis C</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Thyroid disorders</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>HIV / Aids</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Lung Diseases</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Cancer</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Tuberculosis</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Radiation Therapy</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Kidney Diseases</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Chemotherapy</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Liver Disease</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Epilepsy / Seizures</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Pancreatic Disease</span></label>
+          <label class="check-item"><input type="checkbox" name="med_cond"><span>Psychiatric conditions</span></label>
+        </div>
+        <div class="field-group" style="margin-top:14px;">
+          <div class="field"><label>Please elaborate on any conditions ticked above</label>
+            <textarea id="np_med_detail" placeholder="Details..."></textarea>
+          </div>
+        </div>
+        <div class="yn-block" style="margin-top:10px;">
+          <p>Do you have any condition not listed above that we should know about?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_other_cond" value="no" checked onchange="ynToggle(this,'np_other_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_other_cond" value="yes" onchange="ynToggle(this,'np_other_x')"><span>Yes, please specify</span></label>
+          </div>
+          <div class="yn-extra" id="np_other_x"><input type="text" placeholder="Please specify..."></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Dental Conditions</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px;">Do you have or have you had any of the following?</p>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Sensitive teeth</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Cold sores</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Loose teeth</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Clenching / Grinding</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Bleeding gums</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Orthodontic treatment</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Bad breath</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Periodontal treatment</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Oral surgery / extractions</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Jaw joint problem (click, pop, lock)</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Dental implants</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Trauma to face / chin / jaw</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Frequent sugary drinks / Juices</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Oral cancer</span></label>
+          <label class="check-item"><input type="checkbox" name="dent_cond"><span>Frequent smoking / Tobacco use</span></label>
+        </div>
+        <div class="field-group" style="margin-top:14px;">
+          <div class="field"><label>Please elaborate on any conditions ticked above</label>
+            <textarea id="np_dent_detail" placeholder="Details..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Medical History</div>
+        <div class="yn-block">
+          <p>Have you been under a physician's care or hospitalised in the last two years?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_hosp" value="no" checked onchange="ynToggle(this,'np_hosp_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_hosp" value="yes" onchange="ynToggle(this,'np_hosp_x')"><span>Yes</span></label>
+          </div>
+          <div class="yn-extra" id="np_hosp_x"><input type="text" placeholder="Physician name and reason..."></div>
+        </div>
+        <div class="yn-block">
+          <p>Are you taking any medications, Bisphosphonates, and/or Denosumab?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_meds" value="no" checked onchange="ynToggle(this,'np_meds_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_meds" value="yes" onchange="ynToggle(this,'np_meds_x')"><span>Yes, please specify</span></label>
+          </div>
+          <div class="yn-extra" id="np_meds_x"><input type="text" placeholder="List medications..."></div>
+        </div>
+        <div class="yn-block">
+          <p>Are you allergic to anything?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_allergy" value="no" checked onchange="ynToggle(this,'np_allergy_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_allergy" value="yes" onchange="ynToggle(this,'np_allergy_x')"><span>Yes, please elaborate</span></label>
+          </div>
+          <div class="yn-extra" id="np_allergy_x"><input type="text" placeholder="Describe allergies..."></div>
+        </div>
+        <div class="yn-block">
+          <p>Do you smoke cigarettes, vape, or other?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_smoke" value="no" checked onchange="ynToggle(this,'np_smoke_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_smoke" value="yes" onchange="ynToggle(this,'np_smoke_x')"><span>Yes, please specify</span></label>
+          </div>
+          <div class="yn-extra" id="np_smoke_x"><input type="text" placeholder="Please specify..."></div>
+        </div>
+        <div class="yn-block">
+          <p>Do you take any recreational drugs?</p>
+          <div class="radio-row">
+            <label class="radio-item"><input type="radio" name="np_drugs" value="no" checked onchange="ynToggle(this,'np_drugs_x')"><span>No</span></label>
+            <label class="radio-item"><input type="radio" name="np_drugs" value="yes" onchange="ynToggle(this,'np_drugs_x')"><span>Yes, please specify</span></label>
+          </div>
+          <div class="yn-extra" id="np_drugs_x"><input type="text" placeholder="Please specify..."></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Acknowledgment & Signature</div>
+        <div class="consent-box">
+          I agree to allow you to use my testimonial, photos, videos, and name for educational or marketing purposes.
+        </div>
+        <div class="radio-row" style="margin-bottom:20px;">
+          <label class="radio-item"><input type="radio" name="np_mkt" value="yes"><span>Yes, I agree</span></label>
+          <label class="radio-item"><input type="radio" name="np_mkt" value="no"><span>No</span></label>
+        </div>
+        <div class="divider"></div>
+        <p style="font-size:12px;color:var(--charcoal);margin-bottom:16px;line-height:1.7;">By signing below I am verifying that all information on this form is accurate and current.</p>
+        <div class="field" style="margin-bottom:16px;">
+          <label>Signature of Patient or Guardian (if patient is a minor)</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_np" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_np')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+        <div class="field-group two">
+          <div class="field"><label>Date of Signature</label><input type="date" id="np_sig_date"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORM: DENTAL RECORDS CONSENT ── -->
+    <div class="form-page" id="page-dental-consent">
+      <div class="form-header">
+        <h2>Consent for Use of Dental Records</h2>
+        <p>Dr Adell Naidoo &nbsp;·&nbsp; <span>Practice No: 094000 0501158</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Patient Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Full Names and Surname</label><input type="text" id="dc_name" placeholder="Full names and surname"></div>
+          <div class="field"><label>ID / Passport Number</label><input type="text" id="dc_id" placeholder="ID or passport number"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Consent Selection</div>
+        <div class="consent-box">
+          Please indicate your preferences regarding the use of your dental records, including photographs.
+        </div>
+
+        <label class="check-option">
+          <input type="checkbox" id="dc_no_consent">
+          <span><strong>Do not consent</strong> for the use or sharing of my dental records for educational and teaching purposes or on any social media platforms.</span>
+        </label>
+
+        <p style="font-size:12px;color:var(--gray);margin:14px 0 10px;font-weight:500;">I give my consent for my dental records and photographs to be shared and used for:</p>
+
+        <label class="check-option">
+          <input type="checkbox" id="dc_edu_incl">
+          <span>Educational and teaching purposes (presentations at conferences, congresses and study group meetings) <strong>including</strong> full facial photographs</span>
+        </label>
+        <label class="check-option">
+          <input type="checkbox" id="dc_edu_excl">
+          <span>Educational and teaching purposes (presentations at conferences, congresses and study group meetings) <strong>excluding</strong> full facial photographs</span>
+        </label>
+        <label class="check-option">
+          <input type="checkbox" id="dc_social_incl">
+          <span>Social media platforms <strong>including</strong> full facial photographs</span>
+        </label>
+        <label class="check-option">
+          <input type="checkbox" id="dc_social_excl">
+          <span>Social media platforms <strong>excluding</strong> full facial photographs</span>
+        </label>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Signature</div>
+        <div class="dated">
+          <strong>Dated at</strong>
+          <div class="dated-row">
+            <input type="text" id="dc_place" placeholder="Place" style="width:130px">
+            <span>on this</span>
+            <input type="text" id="dc_day" placeholder="Day" style="width:46px">
+            <span>day of</span>
+            <input type="text" id="dc_month_year" placeholder="Month & Year" style="width:130px">
+          </div>
+        </div>
+        <div class="field">
+          <label>Signature</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_dc" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_dc')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORM: POPI XRAY ── -->
+    <div class="form-page" id="page-popi-xray">
+      <div class="form-header">
+        <h2>POPI Act – X-rays &amp; Clinical Images</h2>
+        <p>Full responsibility for clinical images, x-rays and scan files &nbsp;·&nbsp; <span>Dr Adell Naidoo Inc.</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Patient Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Full Names and Surname</label><input type="text" id="px_name" placeholder="Full names and surname"></div>
+          <div class="field"><label>ID / Passport Number</label><input type="text" id="px_id" placeholder="ID or passport number"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Declaration – English</div>
+        <div class="consent-box">
+          I hereby accept / take full responsibility for my clinical images, x-rays, or scan files from the practice of <strong>Dr Adell Naidoo Inc.</strong>
+        </div>
+        <div class="dated">
+          <strong>Dated at</strong>
+          <div class="dated-row">
+            <input type="text" id="px_place" placeholder="Place" style="width:130px">
+            <span>on this</span>
+            <input type="text" id="px_day" placeholder="Day" style="width:46px">
+            <span>day of</span>
+            <input type="text" id="px_month_year" placeholder="Month & Year" style="width:130px">
+          </div>
+        </div>
+        <div class="field">
+          <label>Signature</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_px" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_px')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--gold);">
+        <div class="card-title">Verklaring – Afrikaans (POPI-Wet)</div>
+        <div class="consent-box">
+          Ek aanvaar / neem die volle verantwoordelikheid vir my kliniese beelde, x-strale of skandeerlêers uit die praktyk van <strong>Dr Adell Naidoo Inc.</strong>
+        </div>
+        <div class="dated">
+          <strong>Gedateer te</strong>
+          <div class="dated-row">
+            <input type="text" id="px_place_af" placeholder="Plek" style="width:130px">
+            <span>op hierdie</span>
+            <input type="text" id="px_day_af" placeholder="Dag" style="width:46px">
+            <span>dag van</span>
+            <input type="text" id="px_month_af" placeholder="Maand & Jaar" style="width:130px">
+          </div>
+        </div>
+        <div class="field">
+          <label>Handtekening</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_px_af" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_px_af')">Clear</button>
+              <span class="sig-hint">Teken met muis of vinger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORM: POPI PRIVATE ── -->
+    <div class="form-page" id="page-popi-private">
+      <div class="form-header">
+        <h2>POPI Act – Private Information</h2>
+        <p>Approval for access, use and processing of private information &nbsp;·&nbsp; <span>Dr Adell Naidoo Inc.</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Patient Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Full Names and Surname</label><input type="text" id="pp_name" placeholder="Full names and surname"></div>
+          <div class="field"><label>ID / Passport Number</label><input type="text" id="pp_id" placeholder="ID or passport number"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Consent Declaration</div>
+        <div class="consent-box">
+          I give my consent that my personal information can be shared with referring clinicians and debt collectors of the practice accounts.
+        </div>
+        <div class="dated">
+          <strong>Dated at</strong>
+          <div class="dated-row">
+            <input type="text" id="pp_place" placeholder="Place" style="width:130px">
+            <span>on this</span>
+            <input type="text" id="pp_day" placeholder="Day" style="width:46px">
+            <span>day of</span>
+            <input type="text" id="pp_month_year" placeholder="Month & Year" style="width:130px">
+          </div>
+        </div>
+        <div class="field">
+          <label>Signature of Patient or Guardian</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_pp" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_pp')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORM: ACCOUNTS LIABILITY ── -->
+    <div class="form-page" id="page-accounts">
+      <div class="form-header">
+        <h2>Accounts Liability</h2>
+        <p>Dr Adell Naidoo &nbsp;·&nbsp; <span>Practice No: 094000 0501158 &nbsp;·&nbsp; VAT: 4030273850</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Terms and Conditions</div>
+        <div class="terms-box">
+          <ul>
+            <li>All treatment costs due are payable by the patient on or before the commencement of treatment.</li>
+            <li>The final treatment costs are payable before the placement of the permanent crowns, bridges, or prostheses.</li>
+            <li>The practice is not affiliated with any medical aid scheme or fund and therefore does not submit accounts on the patient's behalf. Submission of accounts to medical aid schemes for authorisation and reimbursements will be the responsibility of the patient.</li>
+            <li>The quotation only provides a cost estimate of the proposed treatment. The final treatment plan and costs may differ, as every treatment is determined by clinical circumstance. This will be discussed with the patient.</li>
+            <li>Final laboratory fees and component fees may differ from the cost estimate due to fluctuations in exchange rates, material costs, or changes in treatment.</li>
+            <li>The practice charges fees that are above the National Health Reference Price List (NHRPL).</li>
+            <li>The cost estimate excludes the surgical fees and the fees of any other practitioners involved in your treatment.</li>
+            <li>Cost estimates are valid for the calendar year in which they were generated. Procedures in the following year will carry the associated increase for that year.</li>
+            <li>After completion of treatment, you will be placed on a specifically prepared maintenance programme. This cost is not included in the cost estimate.</li>
+          </ul>
+          <div class="terms-ack">
+            <p>* I hereby acknowledge and agree that by my signature below I will be held liable for the due payment of all amounts which may now or at any time hereafter become payable.</p>
+            <p style="margin-top:6px;">* I agree to pay all legal charges on the attorney and client scale including collection commission should legal action be instituted against me.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Signature</div>
+        <div class="dated">
+          <strong>Dated at</strong>
+          <div class="dated-row">
+            <input type="text" id="acc_place" placeholder="Place" style="width:130px">
+            <span>on this</span>
+            <input type="text" id="acc_day" placeholder="Day" style="width:46px">
+            <span>day of</span>
+            <input type="text" id="acc_month_year" placeholder="Month & Year" style="width:130px">
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:16px;">
+          <div class="field"><label>Full Names and Surname</label><input type="text" id="acc_name" placeholder="Full name of account holder"></div>
+        </div>
+        <div class="field">
+          <label>Signature of Person Responsible for the Account</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_acc" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_acc')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORM: TREATMENT CONSENT ── -->
+    <div class="form-page" id="page-treatment">
+      <div class="form-header">
+        <h2>Treatment Consent</h2>
+        <p>Dr Adell Naidoo &nbsp;·&nbsp; <span>Practice No: 094000 0501158</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Patient Details</div>
+        <div class="field-group two">
+          <div class="field"><label>Full Names and Surname</label><input type="text" id="tc_name" placeholder="Full names and surname"></div>
+          <div class="field"><label>Date</label><input type="date" id="tc_date"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">I Confirm and Agree That:</div>
+        <div class="consent-numbered">
+          <ol>
+            <li>The dentist has explained the treatment plan, the risks, and alternative treatment to me.</li>
+            <li>I understand that changes in this treatment will be explained to me together with the costs.</li>
+            <li>I understand that unforeseen complications may arise during treatment and may require different or additional treatment. I permit the dentist or any specialist I am referred to, to carry out such further or different treatment as may be necessary in their professional judgment.</li>
+            <li>I have been informed that the fees charged by this practice are NOT based on benefits provided by my medical aid or insurance plan, but are determined by the dentist based on quality of services, practice costs, and standard of service rendered. The fees and estimates have been fully explained which I accept and undertake to pay on completion of treatment.</li>
+            <li>I understand that there is a deposit required and undertake to pay the deposit before I commence with any of my treatments.</li>
+            <li>I have been given ample chance to ask any questions regarding treatment and fees before treatment begins.</li>
+            <li>I agree to keep scheduled appointments and acknowledge I may be charged for appointments not kept, equivalent to the consultation fee.</li>
+            <li>I authorise the dentist to disclose to my medical scheme, funders, employers, or any third party as directed by me, all dental records and information pertaining to my care by this practice.</li>
+            <li>I certify that I read and write the language in which this consent is drafted and fully understand this consent.</li>
+            <li>By signing I am verifying that all information on this form is accurate and current and that I am responsible for the account.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Signatures</div>
+        <div class="field" style="margin-bottom:20px;">
+          <label>Signature of Patient or Guardian (if patient is a minor)</label>
+          <div class="sig-wrap">
+            <canvas class="sig-canvas" id="sig_tc" height="110"></canvas>
+            <div class="sig-actions">
+              <button type="button" class="sig-clear" onclick="clearCanvas('sig_tc')">Clear</button>
+              <span class="sig-hint">Sign with mouse or finger</span>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p style="font-size:12px;color:var(--charcoal);margin-bottom:16px;font-weight:500;">Signature of the person responsible for payment (if different from above):</p>
+        <div class="field-group two">
+          <div class="field">
+            <label>Witness 1</label>
+            <div class="sig-wrap">
+              <canvas class="sig-canvas" id="sig_tc_w1" height="90"></canvas>
+              <div class="sig-actions"><button type="button" class="sig-clear" onclick="clearCanvas('sig_tc_w1')">Clear</button></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Witness 2</label>
+            <div class="sig-wrap">
+              <canvas class="sig-canvas" id="sig_tc_w2" height="90"></canvas>
+              <div class="sig-actions"><button type="button" class="sig-clear" onclick="clearCanvas('sig_tc_w2')">Clear</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPLETE SCREEN ── -->
+    <div class="form-page" id="page-complete">
+      <div class="complete-screen">
+        <div class="tick">✅</div>
+        <h2>All Done!</h2>
+        <p>
+          Thank you for completing your forms for <strong>Dr Adell Naidoo</strong>.<br><br>
+          Your information has been submitted securely. The practice will be in touch before your appointment.<br><br>
+          If you have any questions please call <strong>021 671 2562</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Navigation buttons (rendered by JS) -->
+    <div id="navBtns"></div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const PRACTICE_EMAIL = 'bpillay23@gmail.com';
+const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${PRACTICE_EMAIL}`;
+
+const FORM_META = {
+  'new-patient':    { label: 'New Patient Form',             icon: '📋' },
+  'dental-consent': { label: 'Dental Records Consent',       icon: '📸' },
+  'popi-xray':      { label: 'POPI – X-rays',                icon: '🩻' },
+  'popi-private':   { label: 'POPI – Private Info',          icon: '🔒' },
+  'accounts':       { label: 'Accounts Liability',           icon: '💳' },
+  'treatment':      { label: 'Treatment Consent',            icon: '🦷' },
+};
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const selectedForms = new Set();
+let activeForms  = [];   // forms the patient needs to complete
+let currentStep  = 0;
+
+// ══════════════════════════════════════
+// ADMIN — form card toggle
+// ══════════════════════════════════════
+function toggleCard(card) {
+  const id = card.dataset.form;
+  if (selectedForms.has(id)) {
+    selectedForms.delete(id);
+    card.classList.remove('active');
+  } else {
+    selectedForms.add(id);
+    card.classList.add('active');
+  }
+  refreshSummary();
+}
+
+function applyPreset(ids) {
+  selectedForms.clear();
+  document.querySelectorAll('.form-card').forEach(c => c.classList.remove('active'));
+  ids.forEach(id => {
+    selectedForms.add(id);
+    const card = document.querySelector(`.form-card[data-form="${id}"]`);
+    if (card) card.classList.add('active');
+  });
+  refreshSummary();
+}
+
+function refreshSummary() {
+  const summary = document.getElementById('selSummary');
+  const tags    = document.getElementById('selTags');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (selectedForms.size === 0) {
+    summary.style.display = 'none';
+    sendBtn.disabled = true;
+    return;
+  }
+
+  summary.style.display = 'block';
+  sendBtn.disabled = false;
+  tags.innerHTML = [...selectedForms]
+    .map(id => `<span class="sel-tag">${FORM_META[id].icon} ${FORM_META[id].label}</span>`)
+    .join('');
+}
+
+// ══════════════════════════════════════
+// ADMIN — generate link
+// ══════════════════════════════════════
+function generateLink() {
+  const name  = document.getElementById('admin_name').value.trim();
+  const email = document.getElementById('admin_email').value.trim();
+
+  if (!name)  { showToast('⚠ Please enter the patient name.');  return; }
+  if (!email) { showToast('⚠ Please enter the patient email.'); return; }
+  if (selectedForms.size === 0) { showToast('⚠ Please select at least one form.'); return; }
+
+  const params = new URLSearchParams({
+    forms: [...selectedForms].join(','),
+    name:  name,
+    email: email
+  });
+
+  const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+
+  document.getElementById('linkUrl').textContent = url;
+  document.getElementById('linkBox').style.display = 'block';
+  showToast(`✓ Link ready for ${name}`);
+}
+
+function copyLink() {
+  const url = document.getElementById('linkUrl').textContent;
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('✓ Link copied to clipboard!'))
+    .catch(() => showToast('⚠ Could not copy — please copy manually.'));
+}
+
+function previewForms() {
+  if (selectedForms.size === 0) { showToast('⚠ Select at least one form to preview.'); return; }
+  launchPatientView([...selectedForms], 'Preview', '');
+}
+
+// ══════════════════════════════════════
+// PATIENT VIEW — launch
+// ══════════════════════════════════════
+function launchPatientView(forms, name, email) {
+  activeForms  = forms;
+  currentStep  = 0;
+
+  // Swap views
+  document.getElementById('adminView').style.display   = 'none';
+  document.getElementById('patientView').style.display = 'block';
+
+  // Update header badge
+  document.getElementById('headerBadge').textContent = 'Patient Form';
+  document.getElementById('headerBadge').classList.add('patient-badge');
+
+  // Greeting
+  if (name && name !== 'Preview') {
+    document.getElementById('patientGreeting').innerHTML =
+      `Welcome <strong>${name}</strong> — please complete your forms for <strong>Dr Adell Naidoo</strong>`;
+  }
+
+  // Build stepper
+  buildStepper();
+
+  // Show first step
+  goToStep(0);
+
+  // Set today's date on date fields
+  const today = new Date().toISOString().split('T')[0];
+  ['np_sig_date', 'tc_date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = today;
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════
+// STEPPER
+// ══════════════════════════════════════
+function buildStepper() {
+  const stepper = document.getElementById('stepper');
+  let html = activeForms.map((id, i) => `
+    <div class="step" id="step_${i}">
+      <div class="step-circle" id="sc_${i}">${i + 1}</div>
+      <div class="step-label">${FORM_META[id]?.icon || ''} ${shortLabel(FORM_META[id]?.label || id)}</div>
+    </div>
+  `).join('');
+  // Final "Done" step
+  html += `
+    <div class="step" id="step_done">
+      <div class="step-circle" id="sc_done">✓</div>
+      <div class="step-label">Done</div>
+    </div>
+  `;
+  stepper.innerHTML = html;
+}
+
+function shortLabel(label) {
+  // Keep it short for stepper
+  const map = {
+    'New Patient Form':       'New Patient',
+    'Dental Records Consent': 'Dental Consent',
+    'POPI – X-rays':          'POPI X-rays',
+    'POPI – Private Info':    'POPI Private',
+    'Accounts Liability':     'Accounts',
+    'Treatment Consent':      'Treatment',
+  };
+  return map[label] || label.split(' ').slice(0, 2).join(' ');
+}
+
+function updateStepper() {
+  activeForms.forEach((id, i) => {
+    const stepEl = document.getElementById(`step_${i}`);
+    const circEl = document.getElementById(`sc_${i}`);
+    if (!stepEl) return;
+    stepEl.classList.remove('is-active', 'is-done');
+    if (i < currentStep)      { stepEl.classList.add('is-done');   circEl.textContent = '✓'; }
+    else if (i === currentStep){ stepEl.classList.add('is-active'); circEl.textContent = i + 1; }
+    else                       {                                     circEl.textContent = i + 1; }
+  });
+  const doneEl = document.getElementById('step_done');
+  if (doneEl) {
+    doneEl.classList.remove('is-active', 'is-done');
+    if (currentStep === activeForms.length) doneEl.classList.add('is-active');
+  }
+}
+
+// ══════════════════════════════════════
+// STEP NAVIGATION
+// ══════════════════════════════════════
+function goToStep(index) {
+  currentStep = index;
+
+  // Hide all pages
+  document.querySelectorAll('.form-page').forEach(p => p.classList.remove('is-active'));
+
+  if (index >= activeForms.length) {
+    // Show complete screen
+    document.getElementById('page-complete').classList.add('is-active');
+    document.getElementById('navBtns').innerHTML = '';
+    updateStepper();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  // Show current form page
+  const formId = activeForms[index];
+  const page   = document.getElementById(`page-${formId}`);
+  if (page) page.classList.add('is-active');
+
+  updateStepper();
+  renderNavBtns(index);
+
+  // Init signatures on this page
+  setTimeout(() => initSignaturesOnPage(formId), 60);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderNavBtns(index) {
+  const isFirst = index === 0;
+  const isLast  = index === activeForms.length - 1;
+  let html = '';
+
+  if (!isFirst) {
+    html += `<button class="nav-back" onclick="goToStep(${index - 1})">← Back</button>`;
+  }
+
+  if (isLast) {
+    html += `<button class="nav-submit" id="submitBtn" onclick="submitForms()">Submit All Forms ✓</button>`;
+  } else {
+    html += `<button class="nav-next" onclick="goToStep(${index + 1})">Save & Continue →</button>`;
+  }
+
+  document.getElementById('navBtns').innerHTML = `<div class="nav-btns">${html}</div>`;
+}
+
+// ══════════════════════════════════════
+// SIGNATURES
+// ══════════════════════════════════════
+const sigInitialised = new Set();
+
+const SIG_IDS = ['sig_np','sig_dc','sig_px','sig_px_af','sig_pp','sig_acc','sig_tc','sig_tc_w1','sig_tc_w2'];
+
+const PAGE_SIGS = {
+  'new-patient':    ['sig_np'],
+  'dental-consent': ['sig_dc'],
+  'popi-xray':      ['sig_px','sig_px_af'],
+  'popi-private':   ['sig_pp'],
+  'accounts':       ['sig_acc'],
+  'treatment':      ['sig_tc','sig_tc_w1','sig_tc_w2'],
+};
+
+function initSignaturesOnPage(formId) {
+  const ids = PAGE_SIGS[formId] || [];
+  ids.forEach(id => initSig(id));
+}
+
+function initSig(id) {
+  if (sigInitialised.has(id)) return;
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+
+  // Set canvas pixel width to match CSS width
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = parseInt(canvas.getAttribute('height') || 110);
+
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth   = 2;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  let drawing = false;
+
+  function getXY(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src  = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    const p = getXY(e);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    const p = getXY(e);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+  });
+  canvas.addEventListener('mouseup',    () => { drawing = false; });
+  canvas.addEventListener('mouseleave', () => { drawing = false; });
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault(); drawing = true;
+    const p = getXY(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+  }, { passive: false });
+  canvas.addEventListener('touchmove', e => {
+    if (!drawing) return; e.preventDefault();
+    const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke();
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => { drawing = false; });
+
+  sigInitialised.add(id);
+}
+
+function clearCanvas(id) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ══════════════════════════════════════
+// COLLECT FORM DATA
+// ══════════════════════════════════════
+function val(id) {
+  return (document.getElementById(id)?.value || '').trim();
+}
+function radioVal(name) {
+  return document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+}
+function ynVal(name, extraInputSelector) {
+  const v = radioVal(name);
+  if (v === 'yes') {
+    const extra = document.querySelector(extraInputSelector)?.value?.trim();
+    return extra ? `Yes — ${extra}` : 'Yes';
+  }
+  return 'No';
+}
+function checkboxList(name) {
+  const checked = [];
+  document.querySelectorAll(`input[name="${name}"]:checked`).forEach(cb => {
+    checked.push(cb.closest('.check-item')?.querySelector('span')?.textContent?.trim() || '');
+  });
+  return checked.length ? checked.join(', ') : 'None';
+}
+
+function collectData() {
+  const data = {};
+  data['Forms Completed'] = activeForms.map(id => FORM_META[id]?.label || id).join(', ');
+
+  if (activeForms.includes('new-patient')) {
+    data['-- NEW PATIENT FORM --'] = '---';
+    data['Title']                  = val('np_title');
+    data['First Names']            = val('np_firstname');
+    data['Surname']                = val('np_surname');
+    data['Initials']               = val('np_initials');
+    data['Date of Birth']          = val('np_dob');
+    data['ID / Passport']          = val('np_id');
+    data['Address']                = val('np_address');
+    data['City']                   = val('np_city');
+    data['Postal Code']            = val('np_postal');
+    data['Cell Phone']             = val('np_cell');
+    data['Work Phone']             = val('np_work');
+    data['Home Phone']             = val('np_home');
+    data['Email']                  = val('np_email');
+    data['Referred By']            = val('np_referral');
+    data['Medical Aid']            = val('np_ma_name');
+    data['Medical Aid Number']     = val('np_ma_num');
+    data['Main Member']            = val('np_ma_member');
+    data['Emergency Contact']      = `${val('np_ec_name')} ${val('np_ec_surname')} (${val('np_ec_rel')}) — ${val('np_ec_tel')}`;
+    data['Account Holder']         = `${val('np_ar_name')} ${val('np_ar_surname')} — ID: ${val('np_ar_id')} — Tel: ${val('np_ar_tel')}`;
+    data['Account Holder Address'] = val('np_ar_addr');
+    data['Medical Conditions']     = checkboxList('med_cond');
+    data['Medical Detail']         = val('np_med_detail');
+    data['Dental Conditions']      = checkboxList('dent_cond');
+    data['Dental Detail']          = val('np_dent_detail');
+    data['Hospitalised (2yr)']     = ynVal('np_hosp', '#np_hosp_x input');
+    data['Medications']            = ynVal('np_meds',    '#np_meds_x input');
+    data['Allergies']              = ynVal('np_allergy', '#np_allergy_x input');
+    data['Smoker / Vaper']         = ynVal('np_smoke',   '#np_smoke_x input');
+    data['Recreational Drugs']     = ynVal('np_drugs',   '#np_drugs_x input');
+    data['Marketing Consent']      = radioVal('np_mkt') === 'yes' ? 'Yes' : 'No';
+    data['Signature Date']         = val('np_sig_date');
+  }
+
+  if (activeForms.includes('dental-consent')) {
+    data['-- DENTAL RECORDS CONSENT --'] = '---';
+    data['DC Patient Name']   = val('dc_name');
+    data['DC ID']             = val('dc_id');
+    data['DC No Consent']     = document.getElementById('dc_no_consent')?.checked  ? 'Yes' : 'No';
+    data['DC Edu (incl photo)']   = document.getElementById('dc_edu_incl')?.checked     ? 'Yes' : 'No';
+    data['DC Edu (excl photo)']   = document.getElementById('dc_edu_excl')?.checked     ? 'Yes' : 'No';
+    data['DC Social (incl photo)']= document.getElementById('dc_social_incl')?.checked  ? 'Yes' : 'No';
+    data['DC Social (excl photo)']= document.getElementById('dc_social_excl')?.checked  ? 'Yes' : 'No';
+    data['DC Place / Date']   = `${val('dc_place')} — ${val('dc_day')} ${val('dc_month_year')}`;
+  }
+
+  if (activeForms.includes('popi-xray')) {
+    data['-- POPI XRAY --']       = '---';
+    data['PX Patient Name']       = val('px_name');
+    data['PX ID']                 = val('px_id');
+    data['PX Place / Date']       = `${val('px_place')} — ${val('px_day')} ${val('px_month_year')}`;
+    data['PX Place / Date (AF)']  = `${val('px_place_af')} — ${val('px_day_af')} ${val('px_month_af')}`;
+  }
+
+  if (activeForms.includes('popi-private')) {
+    data['-- POPI PRIVATE --']    = '---';
+    data['PP Patient Name']       = val('pp_name');
+    data['PP ID']                 = val('pp_id');
+    data['PP Place / Date']       = `${val('pp_place')} — ${val('pp_day')} ${val('pp_month_year')}`;
+  }
+
+  if (activeForms.includes('accounts')) {
+    data['-- ACCOUNTS LIABILITY --'] = '---';
+    data['ACC Name']              = val('acc_name');
+    data['ACC Place / Date']      = `${val('acc_place')} — ${val('acc_day')} ${val('acc_month_year')}`;
+  }
+
+  if (activeForms.includes('treatment')) {
+    data['-- TREATMENT CONSENT --'] = '---';
+    data['TC Patient Name']       = val('tc_name');
+    data['TC Date']               = val('tc_date');
+  }
+
+  return data;
+}
+
+// ══════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════
+async function submitForms() {
+  const btn = document.getElementById('submitBtn');
+  if (btn) { btn.textContent = 'Submitting…'; btn.disabled = true; }
+
+  const data = collectData();
+
+  // Get patient email — prefer what admin entered in URL, fallback to new patient form
+  const urlParams    = new URLSearchParams(window.location.search);
+  const patientEmail = urlParams.get('email') || val('np_email') || '';
+  const patientName  = urlParams.get('name')  || val('np_firstname') || 'Patient';
+
+  const payload = {
+    ...data,
+    _subject:  'Patient Form Completed – Dr Adell Naidoo',
+    _captcha:  'false',
+    _template: 'table',
+  };
+
+  // Auto-reply to patient
+  if (patientEmail) {
+    payload._replyto      = patientEmail;
+    payload._autoresponse = `Dear ${patientName},\n\nThank you for completing your patient forms for Dr Adell Naidoo.\n\nWe have received your submission and the practice will be in touch before your appointment.\n\nIf you have any questions please call us on 021 671 2562.\n\nKind regards,\nDr Adell Naidoo's Practice`;
+  }
+
+  try {
+    const res  = await fetch(FORMSUBMIT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    const json = await res.json();
+    if (json.success === 'true' || json.success === true) {
+      goToStep(activeForms.length); // show complete screen
+      showToast('✓ Forms submitted successfully!');
+    } else {
+      throw new Error('FormSubmit failure');
+    }
+  } catch (err) {
+    console.error(err);
+    if (btn) { btn.textContent = 'Submit All Forms ✓'; btn.disabled = false; }
+    showToast('⚠ Submission failed. Please try again or call 021 671 2562.');
+  }
+}
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function ynToggle(radio, extraId) {
+  const el = document.getElementById(extraId);
+  if (el) el.classList.toggle('show', radio.value === 'yes');
+}
+
+function showToast(msg, duration = 4000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ══════════════════════════════════════
+// BOOT — read URL params on load
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const fp     = params.get('forms');
+  const name   = params.get('name')  || '';
+  const email  = params.get('email') || '';
+
+  if (fp) {
+    const forms = fp.split(',').filter(id => FORM_META[id]);
+    if (forms.length > 0) {
+      launchPatientView(forms, name, email);
+      return;
+    }
+  }
+
+  // No URL params — show admin view
+  document.getElementById('adminView').style.display   = 'block';
+  document.getElementById('patientView').style.display = 'none';
+});
+</script>
+</body>
+</html>
